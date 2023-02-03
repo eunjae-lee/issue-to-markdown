@@ -6,6 +6,22 @@ inputs:
     required: true
     description: 'Destination path for: `<project-root>/<dest>/<slug>/index.md`'
     default: 'content'
+  github_token:
+    description: Personal access token
+    required: false
+    default: ''
+  extension:
+    description: File extension
+    required: false
+    default: '.md'
+  slug_as_folder_name:
+    description: Use the `slug` from the frontmatter (if exists) to create the folder. If not, the issue number is used instead.
+    required: false
+    default: true
+  commit_prefix:
+    description: Prefix for commit messages
+    required: false
+    default: 'docs:'
 runs:
   using: 'node16'
   main: 'dist/index.js'

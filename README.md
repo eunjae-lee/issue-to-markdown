@@ -2,108 +2,79 @@
   <a href="https://github.com/eunjae-lee/issue-to-markdown/actions"><img alt="typescript-action status" src="https://github.com/eunjae-lee/issue-to-markdown/workflows/build-test/badge.svg"></a>
 </p>
 
-# Create a JavaScript Action using TypeScript
+# issue-to-markdown
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
+> GitHub Action to monitor and convert issues into markdown files within your repository.
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.
+How do you edit and manage your markdown files within your repository?
 
-If you are new, there's also a simpler introduction. See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+- `git pull`
+- (merge conflicts)
+- edit files
+- `git commit`
+- `git push`
+- 😫
 
-## Create an action from this template
+What if you could automatically convert GitHub Issues into markdown files, allowing you to write using just a browser?
 
-Click the `Use this Template` and provide the new repo details for your action
+## Usage
 
-## Code in Main
+Create a file `.github/workflows/issue-to-markdown.yml` (or any filename) in your repository.
 
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
+```yml
+on:
+  issues:
+    types:
+      - labeled
 
-Install the dependencies
-
-```bash
-$ npm install
+jobs:
+  issue_to_markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - uses: eunjae-lee/issue-to-markdown@v0
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'docs: update contents'
 ```
 
-Build the typescript and package it for distribution
+If you add a `publish` label to any of your issues, this workflow will be activated.
 
-```bash
-$ npm run build && npm run package
+## How It Works
+
+<details>
+<summary>
+For those unfamiliar with GitHub Actions, here's a breakdown of the process:
+</summary>
+
+1. In this step, the repository is cloned. A personal access token must be provided as token to allow the workflow to commit and push changes to the remote.
+
+```yml
+- uses: actions/checkout@v3
+  with:
+    token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 ```
 
-Run the tests :heavy_check_mark:
+2. In this step, the issue is transformed into a markdown file, located in its own folder (default location: `content/<slug or issue_number>/index.md`). The token is also necessary here.
 
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
+```yml
+- uses: eunjae-lee/issue-to-markdown@v0
+  with:
+    token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 ```
 
-## Change action.yml
+3. In this step, changes are committed and pushed to the remote. For more information on customizing the commit, refer to [this](https://github.com/stefanzweifel/git-auto-commit-action).
 
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try {
-      ...
-  }
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
+```yml
+- uses: stefanzweifel/git-auto-commit-action@v4
+  with:
+    commit_message: 'docs: update contents'
 ```
+</details>
 
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
+## Personal Access Token
 
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder.
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket:
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
-
-```yaml
-uses: ./
-with:
-  milliseconds: 1000
-```
-
-See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
-
-## Usage:
-
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action

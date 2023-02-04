@@ -78,3 +78,40 @@ For those unfamiliar with GitHub Actions, here's a breakdown of the process:
 
 ## Personal Access Token
 
+Visit https://github.com/settings/tokens/new to create a new personal access token. Choose "Tokens (classic)" instead of "Fine-grained tokens".
+
+<details>
+<summary>
+Click here to see the screenshots.
+</summary>
+
+### 1. Create a personal access token just like the screenshot at https://github.com/settings/tokens/new
+
+![creating personal access token](./public/creating_personal_access_token.png)
+
+### 2. Go to the Settings and add it into the Repository secrets.
+
+![setting personal access token](./public/setting_personal_access_token.png)
+
+</details>
+
+## Options
+
+```yml
+- uses: eunjae-lee/issue-to-markdown@v0
+  with:
+    # Required
+    token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    
+    # Optional. New files are located at `<project-root>/<dest>/<slug or issue_number>/index.md`. (default: 'content')
+    dest: 'content'
+
+    # Optional (default: '.md')
+    extension: '.md'
+    
+    # Optional. If set to `true`, the `slug` from the frontmatter of the issue body will be used as the folder name instead of `issue_number`. If set to `false`, only `issue_number` is used. (default: true)
+    slug_as_folder_name: true
+    
+    # Optional. By default, `publish` label is required for the workflow to work.
+    label: 'publish'
+```

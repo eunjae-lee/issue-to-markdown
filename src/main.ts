@@ -1,19 +1,61 @@
+import {mkdirp} from 'mkdirp'
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as github from '@actions/github'
+import frontmatter from 'front-matter'
+import fs from 'fs'
+import path from 'path'
 
 async function run(): Promise<void> {
-  try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+  const token: string = core.getInput('token')
+  const destPath: string = core.getInput('dest')
+  const publishLabel: string = core.getInput('label')
+  const extension: string = core.getInput('extension')
+  const slugAsFolderName: boolean = core.getBooleanInput('slug_as_folder_name')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+  const issue = github.context.payload.issue
+  if (!issue) {
+    core.setFailed('This Action works only from the `issue` triggers.')
+    return
   }
+
+  const {owner, repo} = github.context.repo
+
+  const response = await github.getOctokit(token).rest.issues.get({
+    owner,
+    repo,
+    issue_number: issue.number
+  })
+  const {
+    data: {labels}
+  } = response
+  const labelMatches = labels.find(
+    label =>
+      label === publishLabel ||
+      (typeof label === 'object' && label.name === publishLabel)
+  )
+  if (!labelMatches) {
+    core.setFailed(
+      `This Action requires the label(\`${publishLabel}\`) in the issue.`
+    )
+    return
+  }
+
+  const {
+    attributes: {slug}
+  } = frontmatter<{slug: string}>(issue.body || '')
+
+  const relativePath = path.join(
+    destPath,
+    slugAsFolderName ? slug || String(issue.number) : String(issue.number),
+    `index${extension}`
+  )
+  const fullPath = path.resolve(relativePath)
+  mkdirp.sync(path.dirname(fullPath))
+  fs.writeFileSync(fullPath, issue.body || '')
 }
 
-run()
+try {
+  run()
+} catch (err) {
+  core.setFailed((err as Error).message)
+}

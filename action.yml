@@ -2,10 +2,25 @@ name: 'Issue to Markdown'
 description: 'A GitHub Action to monitor and convert issues into markdown files within your repository.'
 author: 'Eunjae Lee'
 inputs:
-  dest:
+  token:
+    description: Personal access token
     required: true
+  dest:
+    required: false
     description: 'Destination path for: `<project-root>/<dest>/<slug>/index.md`'
     default: 'content'
+  extension:
+    description: File extension
+    required: false
+    default: '.md'
+  slug_as_folder_name:
+    description: Use the `slug` from the frontmatter (if exists) to create the folder. If not, the issue number is used instead.
+    required: false
+    default: true
+  label:
+    description: Label on issue to trigger the update
+    required: false
+    default: 'publish'
 runs:
   using: 'node16'
   main: 'dist/index.js'

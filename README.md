@@ -44,6 +44,16 @@ jobs:
 
 If you add a `publish` label to any of your issues, this workflow will be activated.
 
+To automatically update the markdown file after making changes to the issue, update the yml file as follows:
+
+```yml
+on:
+  issues:
+    types:
+      - labeled
+      - edited
+```
+
 ## How It Works
 
 <details>
@@ -74,6 +84,7 @@ For those unfamiliar with GitHub Actions, here's a breakdown of the process:
   with:
     commit_message: 'docs: update contents'
 ```
+
 </details>
 
 ## Personal Access Token
@@ -102,16 +113,16 @@ Click here to see the screenshots.
   with:
     # Required
     token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    
+
     # Optional. New files are located at `<project-root>/<dest>/<slug or issue_number>/index.md`. (default: 'content')
     dest: 'content'
 
     # Optional (default: '.md')
     extension: '.md'
-    
+
     # Optional. If set to `true`, the `slug` from the frontmatter of the issue body will be used as the folder name instead of `issue_number`. If set to `false`, only `issue_number` is used. (default: true)
     slug_as_folder_name: true
-    
+
     # Optional. By default, `publish` label is required for the workflow to work.
     label: 'publish'
 ```

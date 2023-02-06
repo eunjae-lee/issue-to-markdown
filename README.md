@@ -126,3 +126,10 @@ Click here to see the screenshots.
     # Optional. By default, `publish` label is required for the workflow to work.
     label: 'publish'
 ```
+
+## References
+
+- [Creating a JavaScript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action)
+- [TypeScript action template](https://github.com/actions/typescript-action)
+- [Branch naming rules](https://github.com/deepakputhraya/action-pr-title)
+- [git-auto-commit Action](https://github.com/stefanzweifel/git-auto-commit-action)

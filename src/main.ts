@@ -4,6 +4,8 @@ import * as github from '@actions/github'
 import frontmatter from 'front-matter'
 import fs from 'fs'
 import path from 'path'
+import download from 'download'
+import {extractImages} from './extract-images'
 
 async function run(): Promise<void> {
   const token: string = core.getInput('token')
@@ -44,14 +46,28 @@ async function run(): Promise<void> {
     attributes: {slug}
   } = frontmatter<{slug: string}>(issue.body || '')
 
-  const relativePath = path.join(
+  const fullPath = path.resolve(
     destPath,
     slugAsFolderName ? slug || String(issue.number) : String(issue.number),
     `index${extension}`
   )
-  const fullPath = path.resolve(relativePath)
-  mkdirp.sync(path.dirname(fullPath))
-  fs.writeFileSync(fullPath, issue.body || '')
+  const dirname = path.dirname(fullPath)
+  fs.rmSync(dirname, {recursive: true, force: true})
+  mkdirp.sync(dirname)
+
+  let body = issue.body || ''
+  const images = extractImages(body)
+  for (const image of images) {
+    const newImagePath = path.join(dirname, path.basename(image.filename))
+    fs.writeFileSync(newImagePath, await download(image.filename))
+    body = body.replace(
+      image.match,
+      `![${image.alt}](./${newImagePath}${
+        image.title ? ` "${image.title}"` : ''
+      })`
+    )
+  }
+  fs.writeFileSync(fullPath, body)
 }
 
 try {

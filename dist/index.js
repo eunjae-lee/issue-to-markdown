@@ -137,7 +137,7 @@ function run() {
             body = body.replace(image.match, `![${image.alt}](./${newImageFilename}${image.title ? ` "${image.title}"` : ''})`);
         }
         if (insertTitleToFrontMatter) {
-            attributes[title] = title;
+            attributes.title = title;
         }
         const frontmatterText = Object.keys(attributes).length === 0
             ? ''

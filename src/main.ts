@@ -85,7 +85,7 @@ async function run(): Promise<void> {
   }
 
   if (insertTitleToFrontMatter) {
-    attributes[title] = title
+    attributes.title = title
   }
   const frontmatterText =
     Object.keys(attributes).length === 0

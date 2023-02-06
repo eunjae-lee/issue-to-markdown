@@ -1,7 +1,7 @@
 ---
 slug: "test"
 createdAt: "2023-02-04T15:28:30.823Z"
-This is a test issue: "This is a test issue"
+title: "This is a test issue."
 ---
 Hello, world!
 

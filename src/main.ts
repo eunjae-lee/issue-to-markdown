@@ -58,12 +58,14 @@ async function run(): Promise<void> {
   let body = issue.body || ''
   const images = extractImages(body)
   for (const image of images) {
-    const newImagePath = path.join(dirname, path.basename(image.filename))
-    console.log('💡 downloading', image.filename)
-    fs.writeFileSync(newImagePath, await download(image.filename))
+    const newImageFilename = path.basename(image.filename)
+    fs.writeFileSync(
+      path.join(dirname, newImageFilename),
+      await download(image.filename)
+    )
     body = body.replace(
       image.match,
-      `![${image.alt}](./${newImagePath}${
+      `![${image.alt}](./${newImageFilename}${
         image.title ? ` "${image.title}"` : ''
       })`
     )

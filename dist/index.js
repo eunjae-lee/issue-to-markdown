@@ -124,10 +124,9 @@ function run() {
         let body = issue.body || '';
         const images = (0, extract_images_1.extractImages)(body);
         for (const image of images) {
-            const newImagePath = path_1.default.join(dirname, path_1.default.basename(image.filename));
-            console.log('💡 downloading', image.filename);
-            fs_1.default.writeFileSync(newImagePath, yield (0, download_1.default)(image.filename));
-            body = body.replace(image.match, `![${image.alt}](./${newImagePath}${image.title ? ` "${image.title}"` : ''})`);
+            const newImageFilename = path_1.default.basename(image.filename);
+            fs_1.default.writeFileSync(path_1.default.join(dirname, newImageFilename), yield (0, download_1.default)(image.filename));
+            body = body.replace(image.match, `![${image.alt}](./${newImageFilename}${image.title ? ` "${image.title}"` : ''})`);
         }
         fs_1.default.writeFileSync(fullPath, body);
     });

@@ -46,7 +46,7 @@ async function run(): Promise<void> {
     attributes: {slug}
   } = frontmatter<{slug: string}>(issue.body || '')
 
-  const fullPath = path.resolve(
+  const fullPath = path.join(
     destPath,
     slugAsFolderName ? slug || String(issue.number) : String(issue.number),
     `index${extension}`

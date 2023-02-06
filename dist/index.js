@@ -117,7 +117,7 @@ function run() {
             return;
         }
         const { attributes: { slug } } = (0, front_matter_1.default)(issue.body || '');
-        const fullPath = path_1.default.resolve(destPath, slugAsFolderName ? slug || String(issue.number) : String(issue.number), `index${extension}`);
+        const fullPath = path_1.default.join(destPath, slugAsFolderName ? slug || String(issue.number) : String(issue.number), `index${extension}`);
         const dirname = path_1.default.dirname(fullPath);
         fs_1.default.rmSync(dirname, { recursive: true, force: true });
         mkdirp_1.mkdirp.sync(dirname);

@@ -94,6 +94,7 @@ async function run(): Promise<void> {
           '---',
           ...Object.keys(attributes).map(key => `${key}: "${attributes[key]}"`),
           '---',
+          '',
           ''
         ].join('\n')
   fs.writeFileSync(fullPath, frontmatterText + body)

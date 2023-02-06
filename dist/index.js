@@ -145,6 +145,7 @@ function run() {
                 '---',
                 ...Object.keys(attributes).map(key => `${key}: "${attributes[key]}"`),
                 '---',
+                '',
                 ''
             ].join('\n');
         fs_1.default.writeFileSync(fullPath, frontmatterText + body);

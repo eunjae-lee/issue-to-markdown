@@ -130,6 +130,9 @@ Click here to see the screenshots.
     authors:
       - username1
       - username2
+
+    # Optional. If set to `true`, the title of the issue is injected into the frontmatter of the generated file. (default: true)
+    insert_title_to_front_matter: true
 ```
 
 ## References

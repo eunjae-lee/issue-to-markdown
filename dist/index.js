@@ -10,9 +10,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.extractImages = void 0;
 function extractImages(str) {
     const result = [];
-    const regex = 
-    // eslint-disable-next-line no-useless-escape
-    /!\[(?<alt>[^\]]*)\]\((?<filename>.*?)(?=\"|\))(?<title>\".*\")?\)/g;
+    const regex = /!\[([^\]]*)\]\((.*?)\s*(('|")(?:.*[^"])('|"))?\s*\)/g;
     // Alternative syntax using RegExp constructor
     // const regex = new RegExp('!\\[[^\\]]*\\]\\((?<filename>.*?)(?=\\"|\\))(?<optionalpart>\\".*\\")?\\)', 'g')
     let m;
@@ -21,9 +19,9 @@ function extractImages(str) {
         if (m.index === regex.lastIndex) {
             regex.lastIndex++;
         }
-        const { filename, alt, title } = m.groups;
+        const [match, alt, filename, title] = m;
         result.push({
-            match: m[0],
+            match,
             filename: filename.trim(),
             alt,
             title: stripQuotes(title)
@@ -36,7 +34,8 @@ function stripQuotes(str) {
     if (!str) {
         return str;
     }
-    const isQuoted = str.startsWith('"') && str.endsWith('"');
+    const quotes = [`'`, `"`];
+    const isQuoted = quotes.includes(str[0]) && quotes.includes(str[str.length - 1]);
     return isQuoted ? str.slice(1, str.length - 1) : str;
 }
 

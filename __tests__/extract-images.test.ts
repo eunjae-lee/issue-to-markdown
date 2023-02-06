@@ -45,7 +45,7 @@ test('strips qoutes', () => {
   expect(
     extractImages(`
   ![IMG_8640](https://user-images.githubusercontent.com/499898/216828317-f11b77f7-c2cf-4488-af17-9172390b0e32.JPG "hello world")
-  ![](image 2.png "hi there")
+  ![](image 2.png 'hi there')
   `)
   ).toEqual([
     {
@@ -59,7 +59,7 @@ test('strips qoutes', () => {
     {
       alt: '',
       filename: 'image 2.png',
-      match: `![](image 2.png "hi there")`,
+      match: `![](image 2.png 'hi there')`,
       title: 'hi there'
     }
   ])

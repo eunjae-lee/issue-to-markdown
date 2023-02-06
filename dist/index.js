@@ -98,12 +98,18 @@ function run() {
         const publishLabel = core.getInput('label');
         const extension = core.getInput('extension');
         const slugAsFolderName = core.getBooleanInput('slug_as_folder_name');
+        const authors = core.getMultilineInput('authors');
         const issue = github.context.payload.issue;
         if (!issue) {
             core.setFailed('This Action works only from the `issue` triggers.');
             return;
         }
         const { owner, repo } = github.context.repo;
+        const authorizedAuthors = authors && authors.length > 0 ? authors : [owner];
+        if (!authorizedAuthors.includes(github.context.actor)) {
+            core.setFailed('This actor is not authorized to perform this action.');
+            return;
+        }
         const response = yield github.getOctokit(token).rest.issues.get({
             owner,
             repo,

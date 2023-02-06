@@ -13,6 +13,7 @@ async function run(): Promise<void> {
   const publishLabel: string = core.getInput('label')
   const extension: string = core.getInput('extension')
   const slugAsFolderName: boolean = core.getBooleanInput('slug_as_folder_name')
+  const authors: string[] = core.getMultilineInput('authors')
 
   const issue = github.context.payload.issue
   if (!issue) {
@@ -21,6 +22,12 @@ async function run(): Promise<void> {
   }
 
   const {owner, repo} = github.context.repo
+
+  const authorizedAuthors = authors && authors.length > 0 ? authors : [owner]
+  if (!authorizedAuthors.includes(github.context.actor)) {
+    core.setFailed('This actor is not authorized to perform this action.')
+    return
+  }
 
   const response = await github.getOctokit(token).rest.issues.get({
     owner,

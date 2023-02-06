@@ -125,6 +125,11 @@ Click here to see the screenshots.
 
     # Optional. By default, `publish` label is required for the workflow to work.
     label: 'publish'
+
+    # Optional. If not given, only the owner of the repository is authorized to perform this Action. Otherwise, it will fail.
+    authors:
+      - username1
+      - username2
 ```
 
 ## References

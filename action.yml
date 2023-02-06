@@ -21,6 +21,9 @@ inputs:
     description: Label on issue to trigger the update
     required: false
     default: 'publish'
+  authors:
+    description: List of authors that are authorized to perform this Action
+    required: false
 runs:
   using: 'node16'
   main: 'dist/index.js'

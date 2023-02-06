@@ -13,6 +13,9 @@ async function run(): Promise<void> {
   const publishLabel: string = core.getInput('label')
   const extension: string = core.getInput('extension')
   const slugAsFolderName: boolean = core.getBooleanInput('slug_as_folder_name')
+  const insertTitleToFrontMatter: boolean = core.getBooleanInput(
+    'insert_title_to_front_matter'
+  )
   const authors: string[] = core.getMultilineInput('authors')
 
   const issue = github.context.payload.issue
@@ -35,7 +38,7 @@ async function run(): Promise<void> {
     issue_number: issue.number
   })
   const {
-    data: {labels}
+    data: {title, labels}
   } = response
   const labelMatches = labels.find(
     label =>
@@ -49,9 +52,12 @@ async function run(): Promise<void> {
     return
   }
 
-  const {
-    attributes: {slug}
-  } = frontmatter<{slug: string}>(issue.body || '')
+  const {attributes, body: bodyWithoutFrontMatter} = frontmatter<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Record<string, any>
+  >(issue.body || '')
+
+  const {slug} = attributes
 
   const fullPath = path.join(
     destPath,
@@ -62,7 +68,7 @@ async function run(): Promise<void> {
   fs.rmSync(dirname, {recursive: true, force: true})
   mkdirp.sync(dirname)
 
-  let body = issue.body || ''
+  let body = bodyWithoutFrontMatter
   const images = extractImages(body)
   for (const image of images) {
     const newImageFilename = path.basename(image.filename)
@@ -77,7 +83,20 @@ async function run(): Promise<void> {
       })`
     )
   }
-  fs.writeFileSync(fullPath, body)
+
+  if (insertTitleToFrontMatter) {
+    attributes[title] = title
+  }
+  const frontmatterText =
+    Object.keys(attributes).length === 0
+      ? ''
+      : [
+          '---',
+          ...Object.keys(attributes).map(key => `${key}: "${attributes[key]}"`),
+          '---',
+          ''
+        ].join('\n')
+  fs.writeFileSync(fullPath, frontmatterText + body)
 }
 
 try {

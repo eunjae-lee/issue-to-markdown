@@ -98,6 +98,7 @@ function run() {
         const publishLabel = core.getInput('label');
         const extension = core.getInput('extension');
         const slugAsFolderName = core.getBooleanInput('slug_as_folder_name');
+        const insertTitleToFrontMatter = core.getBooleanInput('insert_title_to_front_matter');
         const authors = core.getMultilineInput('authors');
         const issue = github.context.payload.issue;
         if (!issue) {
@@ -115,26 +116,38 @@ function run() {
             repo,
             issue_number: issue.number
         });
-        const { data: { labels } } = response;
+        const { data: { title, labels } } = response;
         const labelMatches = labels.find(label => label === publishLabel ||
             (typeof label === 'object' && label.name === publishLabel));
         if (!labelMatches) {
             core.setFailed(`This Action requires the label(\`${publishLabel}\`) in the issue.`);
             return;
         }
-        const { attributes: { slug } } = (0, front_matter_1.default)(issue.body || '');
+        const { attributes, body: bodyWithoutFrontMatter } = (0, front_matter_1.default)(issue.body || '');
+        const { slug } = attributes;
         const fullPath = path_1.default.join(destPath, slugAsFolderName ? slug || String(issue.number) : String(issue.number), `index${extension}`);
         const dirname = path_1.default.dirname(fullPath);
         fs_1.default.rmSync(dirname, { recursive: true, force: true });
         mkdirp_1.mkdirp.sync(dirname);
-        let body = issue.body || '';
+        let body = bodyWithoutFrontMatter;
         const images = (0, extract_images_1.extractImages)(body);
         for (const image of images) {
             const newImageFilename = path_1.default.basename(image.filename);
             fs_1.default.writeFileSync(path_1.default.join(dirname, newImageFilename), yield (0, download_1.default)(image.filename));
             body = body.replace(image.match, `![${image.alt}](./${newImageFilename}${image.title ? ` "${image.title}"` : ''})`);
         }
-        fs_1.default.writeFileSync(fullPath, body);
+        if (insertTitleToFrontMatter) {
+            attributes[title] = title;
+        }
+        const frontmatterText = Object.keys(attributes).length === 0
+            ? ''
+            : [
+                '---',
+                ...Object.keys(attributes).map(key => `${key}: "${attributes[key]}"`),
+                '---',
+                ''
+            ].join('\n');
+        fs_1.default.writeFileSync(fullPath, frontmatterText + body);
     });
 }
 try {

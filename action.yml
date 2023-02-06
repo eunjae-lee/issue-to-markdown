@@ -24,6 +24,10 @@ inputs:
   authors:
     description: List of authors that are authorized to perform this Action
     required: false
+  insert_title_to_front_matter:
+    description: Insert `title` in the frontmatter of the generated file.
+    required: false
+    default: true
 runs:
   using: 'node16'
   main: 'dist/index.js'

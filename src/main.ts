@@ -59,6 +59,7 @@ async function run(): Promise<void> {
   const images = extractImages(body)
   for (const image of images) {
     const newImagePath = path.join(dirname, path.basename(image.filename))
+    console.log('💡 downloading', image.filename)
     fs.writeFileSync(newImagePath, await download(image.filename))
     body = body.replace(
       image.match,

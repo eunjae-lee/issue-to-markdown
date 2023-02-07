@@ -20,6 +20,7 @@ await $`git add .`
 await $`git commit -m "chore: release v${version}"`
 
 await $`git tag v${version}`
+await $`git push origin v${version}`
 
 await $`git push --delete origin v0`
 await $`git tag -d v0`

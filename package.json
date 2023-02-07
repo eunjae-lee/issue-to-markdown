@@ -13,7 +13,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "all": "npm run build && npm run format && npm run lint && npm run package && npm test",
-    "prepare": "husky install",
     "deploy": "./scripts/deploy.mjs"
   },
   "repository": {
@@ -43,7 +42,6 @@
     "eslint-plugin-github": "4.6.0",
     "eslint-plugin-jest": "27.2.1",
     "eslint-plugin-prettier": "4.2.1",
-    "husky": "8.0.3",
     "jest": "29.4.1",
     "js-yaml": "4.1.0",
     "prettier": "2.8.3",

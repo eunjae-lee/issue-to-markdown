@@ -25,5 +25,6 @@ $`git push --delete origin v0`
 $`git tag -d`
 $`git tag v0`
 $`git push origin v0`
+$`git push origin main`
 
 $`open "https://github.com/eunjae-lee/issue-to-markdown/releases/new"`

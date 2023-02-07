@@ -14,17 +14,17 @@ if (!/^\d+\.\d+\.\d+$/.test(version)) {
   process.exit(1)
 }
 
-$`npm pkg set version=${version}`
-$`npm run all`
-$`git add .`
-$`git commit -m "chore: release v${version}`
+await $`npm pkg set version=${version}`
+await $`npm run all`
+await $`git add .`
+await $`git commit -m "chore: release v${version}"`
 
-$`git tag v${version}`
+await $`git tag v${version}`
 
-$`git push --delete origin v0`
-$`git tag -d`
-$`git tag v0`
-$`git push origin v0`
-$`git push origin main`
+await $`git push --delete origin v0`
+await $`git tag -d v0`
+await $`git tag v0`
+await $`git push origin v0`
+await $`git push origin main`
 
-$`open "https://github.com/eunjae-lee/issue-to-markdown/releases/new"`
+await $`open "https://github.com/eunjae-lee/issue-to-markdown/releases/new"`

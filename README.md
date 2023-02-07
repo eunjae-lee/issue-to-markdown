@@ -1,6 +1,9 @@
 <p align="center">
   <a href="https://github.com/eunjae-lee/issue-to-markdown/actions"><img alt="typescript-action status" src="https://github.com/eunjae-lee/issue-to-markdown/workflows/build-test/badge.svg"></a>
 </p>
+<p align="center">
+  <a href="https://github.com/marketplace/actions/issue-to-markdown">View on Marketplace</a>
+</p>
 
 # issue-to-markdown
 

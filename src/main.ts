@@ -7,7 +7,8 @@ import path from 'path'
 import download from 'download'
 import {extractImages} from './extract-images'
 
-function formatFrontMatterValue(value) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function formatFrontMatterValue(value: any): any {
   if (new Date(value).toISOString() === value) {
     return JSON.stringify(value)
   } else if (Array.isArray(value)) {

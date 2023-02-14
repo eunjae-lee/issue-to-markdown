@@ -9,12 +9,15 @@ import {extractImages} from './extract-images'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatFrontMatterValue(value: any): any {
+  // TODO: date becomes a Date object automatically, but how can I return the original value?
+  // if (typeof value === 'object' && value instanceof Date) {
+  // }
   if (Array.isArray(value)) {
     return `\n${value
       .map(line => `  - ${formatFrontMatterValue(line)}`)
       .join('\n')}`
   } else {
-    return value
+    return `"${value}"`
   }
 }
 
@@ -104,7 +107,7 @@ async function run(): Promise<void> {
       : [
           '---',
           ...Object.keys(attributes).map(
-            key => `${key}: "${formatFrontMatterValue(attributes[key])}"`
+            key => `${key}: ${formatFrontMatterValue(attributes[key])}`
           ),
           '---',
           '',

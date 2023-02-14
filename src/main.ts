@@ -9,9 +9,7 @@ import {extractImages} from './extract-images'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatFrontMatterValue(value: any): any {
-  if (new Date(value).toISOString() === value) {
-    return JSON.stringify(value)
-  } else if (Array.isArray(value)) {
+  if (Array.isArray(value)) {
     return `\n${value
       .map(line => `  - ${formatFrontMatterValue(line)}`)
       .join('\n')}`

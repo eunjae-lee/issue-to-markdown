@@ -120,7 +120,7 @@ function run() {
         const labelMatches = labels.find(label => label === publishLabel ||
             (typeof label === 'object' && label.name === publishLabel));
         if (!labelMatches) {
-            core.setFailed(`This Action requires the label(\`${publishLabel}\`) in the issue.`);
+            console.log(`This Action requires the label(\`${publishLabel}\`) in the issue.`);
             return;
         }
         const { attributes, body: bodyWithoutFrontMatter } = (0, front_matter_1.default)(issue.body || '');

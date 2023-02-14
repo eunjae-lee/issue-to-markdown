@@ -46,7 +46,7 @@ async function run(): Promise<void> {
       (typeof label === 'object' && label.name === publishLabel)
   )
   if (!labelMatches) {
-    core.setFailed(
+    console.log(
       `This Action requires the label(\`${publishLabel}\`) in the issue.`
     )
     return

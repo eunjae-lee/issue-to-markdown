@@ -93,10 +93,7 @@ const download_1 = __importDefault(__nccwpck_require__(7490));
 const extract_images_1 = __nccwpck_require__(6945);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatFrontMatterValue(value) {
-    if (new Date(value).toISOString() === value) {
-        return JSON.stringify(value);
-    }
-    else if (Array.isArray(value)) {
+    if (Array.isArray(value)) {
         return `\n${value
             .map(line => `  - ${formatFrontMatterValue(line)}`)
             .join('\n')}`;

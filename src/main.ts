@@ -7,6 +7,18 @@ import path from 'path'
 import download from 'download'
 import {extractImages} from './extract-images'
 
+function formatFrontMatterValue(value) {
+  if (new Date(value).toISOString() === value) {
+    return JSON.stringify(value)
+  } else if (Array.isArray(value)) {
+    return `\n${value
+      .map(line => `  - ${formatFrontMatterValue(line)}`)
+      .join('\n')}`
+  } else {
+    return value
+  }
+}
+
 async function run(): Promise<void> {
   const token: string = core.getInput('token')
   const destPath: string = core.getInput('dest')
@@ -92,7 +104,9 @@ async function run(): Promise<void> {
       ? ''
       : [
           '---',
-          ...Object.keys(attributes).map(key => `${key}: "${attributes[key]}"`),
+          ...Object.keys(attributes).map(
+            key => `${key}: "${formatFrontMatterValue(attributes[key])}"`
+          ),
           '---',
           '',
           ''

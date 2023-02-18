@@ -1,42 +1,13 @@
 import {mkdirp} from 'mkdirp'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import frontmatter from 'front-matter'
+import matter from 'gray-matter'
+import {parse, stringify} from 'yaml'
 import fs from 'fs'
 import path from 'path'
 import download from 'download'
 import {extractImages} from './extract-images'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function formatFrontMatterValue(value: any): any {
-  // TODO: date becomes a Date object automatically, but how can I return the original value?
-  // if (typeof value === 'object' && value instanceof Date) {
-  // }
-  if (Array.isArray(value)) {
-    return `\n${value
-      .map(line => `  - ${formatFrontMatterValue(line)}`)
-      .join('\n')}`
-  } else {
-    return `"${value}"`
-  }
-}
-
-function getFolderName({
-  slugAsFolderName,
-  slugKey,
-  issueNumber,
-  attributes
-}: {
-  slugAsFolderName: boolean
-  slugKey: string
-  issueNumber: number
-  attributes: Record<string, string>
-}): string {
-  if (slugAsFolderName === true && attributes[slugKey]) {
-    return attributes[slugKey]
-  }
-  return String(issueNumber)
-}
+import {formatFrontMatterValue} from './format'
 
 async function run(): Promise<void> {
   const token: string = core.getInput('token')
@@ -84,34 +55,35 @@ async function run(): Promise<void> {
     return
   }
 
-  const {attributes, body: bodyWithoutFrontMatter} = frontmatter<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Record<string, any>
-  >(issue.body || '')
+  const body = issue.body || ''
+  const {data: attributes, content: bodyWithoutFrontMatter} = matter(body)
+  const {data: attributesWithoutDateProcessing} = matter(body, {
+    engines: {
+      yaml: {
+        parse,
+        stringify
+      }
+    }
+  })
 
-  const fullPath = path.join(
-    destPath,
-    getFolderName({
-      slugAsFolderName,
-      slugKey,
-      issueNumber: issue.number,
-      attributes
-    }),
-    `index${extension}`
-  )
+  const folderName =
+    slugAsFolderName === true && attributes[slugKey]
+      ? attributes[slugKey]
+      : String(issue.number)
+  const fullPath = path.join(destPath, folderName, `index${extension}`)
   const dirname = path.dirname(fullPath)
   fs.rmSync(dirname, {recursive: true, force: true})
   mkdirp.sync(dirname)
 
-  let body = bodyWithoutFrontMatter
-  const images = extractImages(body)
+  let bodyText = bodyWithoutFrontMatter
+  const images = extractImages(bodyText)
   for (const image of images) {
     const newImageFilename = path.basename(image.filename)
     fs.writeFileSync(
       path.join(dirname, newImageFilename),
       await download(image.filename)
     )
-    body = body.replace(
+    bodyText = bodyText.replace(
       image.match,
       `![${image.alt}](./${newImageFilename}${
         image.title ? ` "${image.title}"` : ''
@@ -128,13 +100,17 @@ async function run(): Promise<void> {
       : [
           '---',
           ...Object.keys(attributes).map(
-            key => `${key}: ${formatFrontMatterValue(attributes[key])}`
+            key =>
+              `${key}: ${formatFrontMatterValue(
+                attributes[key],
+                attributesWithoutDateProcessing[key]
+              )}`
           ),
           '---',
           '',
           ''
         ].join('\n')
-  fs.writeFileSync(fullPath, frontmatterText + body)
+  fs.writeFileSync(fullPath, frontmatterText + bodyText)
 }
 
 try {

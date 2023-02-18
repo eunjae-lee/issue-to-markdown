@@ -17,6 +17,10 @@ inputs:
     description: Use the `slug` from the frontmatter (if exists) to create the folder. If not, the issue number is used instead.
     required: false
     default: true
+  slug_key:
+    description: Key for the slug from the frontmatter. This is used only when `slug_as_folder_name` is `true`. (`slug` by default.)
+    required: false
+    default: 'slug'
   label:
     description: Label on issue to trigger the update
     required: false

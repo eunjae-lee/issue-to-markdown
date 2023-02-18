@@ -21,12 +21,30 @@ function formatFrontMatterValue(value: any): any {
   }
 }
 
+function getFolderName({
+  slugAsFolderName,
+  slugKey,
+  issueNumber,
+  attributes
+}: {
+  slugAsFolderName: boolean
+  slugKey: string
+  issueNumber: number
+  attributes: Record<string, string>
+}): string {
+  if (slugAsFolderName === true && attributes[slugKey]) {
+    return attributes[slugKey]
+  }
+  return String(issueNumber)
+}
+
 async function run(): Promise<void> {
   const token: string = core.getInput('token')
   const destPath: string = core.getInput('dest')
   const publishLabel: string = core.getInput('label')
   const extension: string = core.getInput('extension')
   const slugAsFolderName: boolean = core.getBooleanInput('slug_as_folder_name')
+  const slugKey: string = core.getInput('slug_key')
   const insertTitleToFrontMatter: boolean = core.getBooleanInput(
     'insert_title_to_front_matter'
   )
@@ -71,11 +89,14 @@ async function run(): Promise<void> {
     Record<string, any>
   >(issue.body || '')
 
-  const {slug} = attributes
-
   const fullPath = path.join(
     destPath,
-    slugAsFolderName ? slug || String(issue.number) : String(issue.number),
+    getFolderName({
+      slugAsFolderName,
+      slugKey,
+      issueNumber: issue.number,
+      attributes
+    }),
     `index${extension}`
   )
   const dirname = path.dirname(fullPath)

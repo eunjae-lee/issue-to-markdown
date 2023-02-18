@@ -126,6 +126,9 @@ Click here to see the screenshots.
     # Optional. If set to `true`, the `slug` from the frontmatter of the issue body will be used as the folder name instead of `issue_number`. If set to `false`, only `issue_number` is used. (default: true)
     slug_as_folder_name: true
 
+    # Optional. Key for the slug from the frontmatter. This is used only when `slug_as_folder_name` is `true`. (`slug` by default.)
+    slug_key: 'slug'
+
     # Optional. By default, `publish` label is required for the workflow to work.
     label: 'publish'
 

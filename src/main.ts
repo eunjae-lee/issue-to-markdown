@@ -103,7 +103,10 @@ async function run(): Promise<void> {
   }
 
   if (insertTimestampToFrontMatter) {
-    attributes[timestampKey] = dayjs(issue.created_at).format(timestampFormat)
+    attributes[timestampKey] =
+      timestampFormat === 'ISO'
+        ? dayjs(issue.created_at).toISOString()
+        : dayjs(issue.created_at).format(timestampFormat)
   }
 
   const frontmatterText =

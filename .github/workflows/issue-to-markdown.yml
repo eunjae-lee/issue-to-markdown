@@ -14,6 +14,7 @@ jobs:
       - uses: ./
         with:
           token: ${{ secrets.PAT }}
+          insert_timestamp_to_front_matter: true
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: 'docs: update markdown from gh issue'

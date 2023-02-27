@@ -59,6 +59,19 @@ hello
   )
 })
 
+test('works with date in string', () => {
+  const content = `---
+slug: test
+createdAt: '2023-02-04T15:28:30.823Z'
+---
+  
+Hello, world!`
+
+  expect(parseAndFormat(content, 'createdAt')).toEqual(
+    `"2023-02-04T15:28:30.823Z"`
+  )
+})
+
 test('works with array of date', () => {
   const content = `---
 timestamps:

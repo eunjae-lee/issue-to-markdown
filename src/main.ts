@@ -6,6 +6,7 @@ import {parse, stringify} from 'yaml'
 import fs from 'fs'
 import path from 'path'
 import download from 'download'
+import dayjs from 'dayjs'
 import {extractImages} from './extract-images'
 import {formatFrontMatterValue} from './format'
 
@@ -21,6 +22,11 @@ async function run(): Promise<void> {
   )
   const titleKey: string = core.getInput('title_key')
   const authors: string[] = core.getMultilineInput('authors')
+  const insertTimestampToFrontMatter: boolean = core.getBooleanInput(
+    'insert_timestamp_to_front_matter'
+  )
+  const timestampKey: string = core.getInput('timestamp_key')
+  const timestampFormat: string = core.getInput('timestamp_format')
 
   const issue = github.context.payload.issue
   if (!issue) {
@@ -95,6 +101,11 @@ async function run(): Promise<void> {
   if (insertTitleToFrontMatter) {
     attributes[titleKey] = title
   }
+
+  if (insertTimestampToFrontMatter) {
+    attributes[timestampKey] = dayjs(issue.created_at).format(timestampFormat)
+  }
+
   const frontmatterText =
     Object.keys(attributes).length === 0
       ? ''

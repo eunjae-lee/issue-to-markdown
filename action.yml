@@ -29,13 +29,25 @@ inputs:
     description: List of authors that are authorized to perform this Action
     required: false
   insert_title_to_front_matter:
-    description: Insert `title` into the frontmatter of the generated file.
+    description: Insert title of issue into the frontmatter of the generated file.
     required: false
     default: true
   title_key:
-    description: Key for the title auto-inserted.
+    description: Key for the auto-inserted title.
     required: false
     default: 'title'
+  insert_timestamp_to_front_matter:
+    description: Insert created timestamp fo issue into the frontmatter of the generated file.
+    required: false
+    default: false
+  timestamp_key:
+    description: Key for the auto-inserted timestamp.
+    required: false
+    default: 'created_at'
+  timestamp_format:
+    description: Formatter based on Day.js
+    required: false
+    default: 'YYYY-MM-DD'
 
 runs:
   using: 'node16'

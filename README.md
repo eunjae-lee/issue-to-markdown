@@ -142,6 +142,15 @@ Click here to see the screenshots.
 
     # Optional. Key for the title auto-inserted.
     title_key: 'title'
+
+    # Optional. If set to `true`, timestamp of the issue creation is inserted into the frontmatter of the generated file. (default: false)
+    insert_timestamp_to_front_matter: false
+
+    # Optioanl. Key for the timestamp when `insert_timestamp_to_front_matter` is true. (default: 'created_at')
+    timestamp_key: 'created_at'
+
+    # Optional. Formatter for the timestamp when `insert_timestamp_to_front_matter` is true. (default: 'YYYY-MM-DD', based on Day.js)
+    timestamp_format: 'YYYY-MM-DD'
 ```
 
 ## References

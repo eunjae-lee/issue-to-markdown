@@ -21,6 +21,11 @@ async function run(): Promise<void> {
   )
   const titleKey: string = core.getInput('title_key')
   const authors: string[] = core.getMultilineInput('authors')
+  const insertTimestampToFrontMatter: boolean = core.getBooleanInput(
+    'insert_timestamp_to_front_matter'
+  )
+  const timestampKey: string = core.getInput('timestamp_key')
+  const timestampFormat: string = core.getInput('timestamp_format')
 
   const issue = github.context.payload.issue
   if (!issue) {

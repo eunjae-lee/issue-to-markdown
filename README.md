@@ -139,6 +139,9 @@ Click here to see the screenshots.
 
     # Optional. If set to `true`, the title of the issue is injected into the frontmatter of the generated file. (default: true)
     insert_title_to_front_matter: true
+
+    # Optional. Key for the title auto-inserted.
+    title_key: 'title'
 ```
 
 ## References

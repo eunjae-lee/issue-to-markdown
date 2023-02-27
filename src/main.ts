@@ -19,6 +19,7 @@ async function run(): Promise<void> {
   const insertTitleToFrontMatter: boolean = core.getBooleanInput(
     'insert_title_to_front_matter'
   )
+  const titleKey: string = core.getInput('title_key')
   const authors: string[] = core.getMultilineInput('authors')
 
   const issue = github.context.payload.issue
@@ -92,7 +93,7 @@ async function run(): Promise<void> {
   }
 
   if (insertTitleToFrontMatter) {
-    attributes.title = title
+    attributes[titleKey] = title
   }
   const frontmatterText =
     Object.keys(attributes).length === 0

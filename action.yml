@@ -32,6 +32,11 @@ inputs:
     description: Insert `title` into the frontmatter of the generated file.
     required: false
     default: true
+  title_key:
+    description: Key for the title auto-inserted.
+    required: false
+    default: 'title'
+
 runs:
   using: 'node16'
   main: 'dist/index.js'

@@ -184,7 +184,10 @@ function run() {
             attributes[titleKey] = title;
         }
         if (insertTimestampToFrontMatter) {
-            attributes[timestampKey] = (0, dayjs_1.default)(issue.created_at).format(timestampFormat);
+            attributes[timestampKey] =
+                timestampFormat === 'ISO'
+                    ? (0, dayjs_1.default)(issue.created_at).toISOString()
+                    : (0, dayjs_1.default)(issue.created_at).format(timestampFormat);
         }
         const frontmatterText = Object.keys(attributes).length === 0
             ? ''

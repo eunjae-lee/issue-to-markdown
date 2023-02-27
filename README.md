@@ -149,7 +149,8 @@ Click here to see the screenshots.
     # Optioanl. Key for the timestamp when `insert_timestamp_to_front_matter` is true. (default: 'created_at')
     timestamp_key: 'created_at'
 
-    # Optional. Formatter for the timestamp when `insert_timestamp_to_front_matter` is true. (default: 'YYYY-MM-DD', based on Day.js)
+    # Optional. Formatter for the timestamp when `insert_timestamp_to_front_matter` is true. (default: 'YYYY-MM-DD')
+    # For more information about formatting, read this: https://github.com/iamkun/dayjs/
     timestamp_format: 'YYYY-MM-DD'
 ```
 

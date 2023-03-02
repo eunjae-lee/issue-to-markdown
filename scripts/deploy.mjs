@@ -22,10 +22,18 @@ await $`git commit -m "chore: release v${version}"`
 await $`git tag v${version}`
 await $`git push origin v${version}`
 
-await $`git push --delete origin v0`
-await $`git tag -d v0`
-await $`git tag v0`
-await $`git push origin v0`
+try {
+  await $`git push --delete origin v1`
+} catch (err) {
+  // ignore this
+}
+try {
+  await $`git tag -d v1`
+} catch (err) {
+  // ignore this
+}
+await $`git tag v1`
+await $`git push origin v1`
 await $`git push origin main`
 
 await $`open "https://github.com/eunjae-lee/issue-to-markdown/releases/new"`

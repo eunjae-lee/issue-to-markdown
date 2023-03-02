@@ -127,12 +127,17 @@ function run() {
         const extension = core.getInput('extension');
         const slugAsFolderName = core.getBooleanInput('slug_as_folder_name');
         const slugKey = core.getInput('slug_key');
-        const insertTitleToFrontMatter = core.getBooleanInput('insert_title_to_front_matter');
-        const titleKey = core.getInput('title_key');
+        const injectTitle = core.getBooleanInput('inject_title');
+        const injectTitleKey = core.getInput('inject_title_key');
         const authors = core.getMultilineInput('authors');
-        const insertTimestampToFrontMatter = core.getBooleanInput('insert_timestamp_to_front_matter');
-        const timestampKey = core.getInput('timestamp_key');
-        const timestampFormat = core.getInput('timestamp_format');
+        const injectCreatedAt = core.getBooleanInput('inject_created_at');
+        const injectCreatedAtKey = core.getInput('inject_created_at_key');
+        const injectCreatedAtFormat = core.getInput('inject_created_at_format');
+        const injectCreatedAtAsString = core.getBooleanInput('inject_created_at_as_string');
+        const injectUpdatedAt = core.getBooleanInput('inject_updated_at');
+        const injectUpdatedAtKey = core.getInput('inject_updated_at_key');
+        const injectUpdatedAtFormat = core.getInput('inject_updated_at_format');
+        const injectUpdatedAtAsString = core.getBooleanInput('inject_updated_at_as_string');
         const issue = github.context.payload.issue;
         if (!issue) {
             core.setFailed('This Action works only from the `issue` triggers.');
@@ -180,20 +185,46 @@ function run() {
             fs_1.default.writeFileSync(path_1.default.join(dirname, newImageFilename), yield (0, download_1.default)(image.filename));
             bodyText = bodyText.replace(image.match, `![${image.alt}](./${newImageFilename}${image.title ? ` "${image.title}"` : ''})`);
         }
-        if (insertTitleToFrontMatter) {
-            attributes[titleKey] = title;
+        if (injectTitle) {
+            attributes[injectTitleKey] = title;
         }
-        if (insertTimestampToFrontMatter) {
-            attributes[timestampKey] =
-                timestampFormat === 'ISO'
+        if (injectCreatedAt) {
+            attributes[injectCreatedAtKey] =
+                injectCreatedAtFormat === 'ISO'
                     ? (0, dayjs_1.default)(issue.created_at).toISOString()
-                    : (0, dayjs_1.default)(issue.created_at).format(timestampFormat);
+                    : (0, dayjs_1.default)(issue.created_at).format(injectCreatedAtFormat);
+        }
+        if (injectUpdatedAt) {
+            attributes[injectUpdatedAtKey] =
+                injectUpdatedAtFormat === 'ISO'
+                    ? (0, dayjs_1.default)(issue.updated_at).toISOString()
+                    : (0, dayjs_1.default)(issue.updated_at).format(injectUpdatedAtFormat);
         }
         const frontmatterText = Object.keys(attributes).length === 0
             ? ''
             : [
                 '---',
-                ...Object.keys(attributes).map(key => `${key}: ${(0, format_1.formatFrontMatterValue)(attributes[key], attributesWithoutDateProcessing[key])}`),
+                ...Object.keys(attributes).map(key => {
+                    const value = attributes[key];
+                    let formattedValue;
+                    if (typeof value === 'object' && value instanceof Date) {
+                        formattedValue = attributesWithoutDateProcessing[key];
+                    }
+                    else if (injectCreatedAt &&
+                        key === injectCreatedAtKey &&
+                        !injectCreatedAtAsString) {
+                        formattedValue = value;
+                    }
+                    else if (injectUpdatedAt &&
+                        key === injectUpdatedAtKey &&
+                        !injectUpdatedAtAsString) {
+                        formattedValue = value;
+                    }
+                    else {
+                        formattedValue = (0, format_1.formatFrontMatterValue)(attributes[key], attributesWithoutDateProcessing[key]);
+                    }
+                    return `${key}: ${formattedValue}`;
+                }),
                 '---',
                 '',
                 ''

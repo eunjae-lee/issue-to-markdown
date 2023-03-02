@@ -17,16 +17,27 @@ async function run(): Promise<void> {
   const extension: string = core.getInput('extension')
   const slugAsFolderName: boolean = core.getBooleanInput('slug_as_folder_name')
   const slugKey: string = core.getInput('slug_key')
-  const insertTitleToFrontMatter: boolean = core.getBooleanInput(
-    'insert_title_to_front_matter'
-  )
-  const titleKey: string = core.getInput('title_key')
+  const injectTitle: boolean = core.getBooleanInput('inject_title')
+  const injectTitleKey: string = core.getInput('inject_title_key')
   const authors: string[] = core.getMultilineInput('authors')
-  const insertTimestampToFrontMatter: boolean = core.getBooleanInput(
-    'insert_timestamp_to_front_matter'
+
+  const injectCreatedAt: boolean = core.getBooleanInput('inject_created_at')
+  const injectCreatedAtKey: string = core.getInput('inject_created_at_key')
+  const injectCreatedAtFormat: string = core.getInput(
+    'inject_created_at_format'
   )
-  const timestampKey: string = core.getInput('timestamp_key')
-  const timestampFormat: string = core.getInput('timestamp_format')
+  const injectCreatedAtAsString: boolean = core.getBooleanInput(
+    'inject_created_at_as_string'
+  )
+
+  const injectUpdatedAt: boolean = core.getBooleanInput('inject_updated_at')
+  const injectUpdatedAtKey: string = core.getInput('inject_updated_at_key')
+  const injectUpdatedAtFormat: string = core.getInput(
+    'inject_updated_at_format'
+  )
+  const injectUpdatedAtAsString: boolean = core.getBooleanInput(
+    'inject_updated_at_as_string'
+  )
 
   const issue = github.context.payload.issue
   if (!issue) {
@@ -98,15 +109,22 @@ async function run(): Promise<void> {
     )
   }
 
-  if (insertTitleToFrontMatter) {
-    attributes[titleKey] = title
+  if (injectTitle) {
+    attributes[injectTitleKey] = title
   }
 
-  if (insertTimestampToFrontMatter) {
-    attributes[timestampKey] =
-      timestampFormat === 'ISO'
+  if (injectCreatedAt) {
+    attributes[injectCreatedAtKey] =
+      injectCreatedAtFormat === 'ISO'
         ? dayjs(issue.created_at).toISOString()
-        : dayjs(issue.created_at).format(timestampFormat)
+        : dayjs(issue.created_at).format(injectCreatedAtFormat)
+  }
+
+  if (injectUpdatedAt) {
+    attributes[injectUpdatedAtKey] =
+      injectUpdatedAtFormat === 'ISO'
+        ? dayjs(issue.updated_at).toISOString()
+        : dayjs(issue.updated_at).format(injectUpdatedAtFormat)
   }
 
   const frontmatterText =
@@ -114,13 +132,31 @@ async function run(): Promise<void> {
       ? ''
       : [
           '---',
-          ...Object.keys(attributes).map(
-            key =>
-              `${key}: ${formatFrontMatterValue(
+          ...Object.keys(attributes).map(key => {
+            const value = attributes[key]
+            let formattedValue
+            if (typeof value === 'object' && value instanceof Date) {
+              formattedValue = attributesWithoutDateProcessing[key]
+            } else if (
+              injectCreatedAt &&
+              key === injectCreatedAtKey &&
+              !injectCreatedAtAsString
+            ) {
+              formattedValue = value
+            } else if (
+              injectUpdatedAt &&
+              key === injectUpdatedAtKey &&
+              !injectUpdatedAtAsString
+            ) {
+              formattedValue = value
+            } else {
+              formattedValue = formatFrontMatterValue(
                 attributes[key],
                 attributesWithoutDateProcessing[key]
-              )}`
-          ),
+              )
+            }
+            return `${key}: ${formattedValue}`
+          }),
           '---',
           '',
           ''

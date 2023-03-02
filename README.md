@@ -117,41 +117,61 @@ Click here to see the screenshots.
     # Required
     token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-    # Optional. New files are located at `<project-root>/<dest>/<slug or issue_number>/index.md`. (default: 'content')
+    # ----------------------------------
+    # All parameters below are optional.
+    # ----------------------------------
+
+    # New files are located at `<project-root>/<dest>/<slug or issue_number>/index.md`. (default: 'content')
     dest: 'content'
 
-    # Optional (default: '.md')
+    # (default: '.md')
     extension: '.md'
 
-    # Optional. If set to `true`, the `slug` from the frontmatter of the issue body will be used as the folder name instead of `issue_number`. If set to `false`, only `issue_number` is used. (default: true)
+    # If set to `true`, the `slug` from the frontmatter of the issue body will be used as the folder name instead of `issue_number`. If set to `false`, only `issue_number` is used. (default: true)
     slug_as_folder_name: true
 
-    # Optional. Key for the slug from the frontmatter. This is used only when `slug_as_folder_name` is `true`. (`slug` by default.)
+    # Key for the slug from the frontmatter. This is used only when `slug_as_folder_name` is `true`. (`slug` by default.)
     slug_key: 'slug'
 
-    # Optional. By default, `publish` label is required for the workflow to work.
+    # By default, `publish` label is required for the workflow to work.
     label: 'publish'
 
-    # Optional. If not given, only the owner of the repository is authorized to perform this Action. Otherwise, it will fail.
+    # If not given, only the owner of the repository is authorized to perform this Action. Otherwise, it will fail.
     authors:
       - username1
       - username2
 
-    # Optional. If set to `true`, the title of the issue is injected into the frontmatter of the generated file. (default: true)
-    insert_title_to_front_matter: true
+    # If set to `true`, the title of the issue is injected into the frontmatter of the generated file. (default: true)
+    inject_title: true
 
-    # Optional. Key for the title auto-inserted.
-    title_key: 'title'
+    # Key to be injected for the title. (default: 'title')
+    inject_title_key: 'title'
 
-    # Optional. If set to `true`, timestamp of the issue creation is inserted into the frontmatter of the generated file. (default: false)
-    insert_timestamp_to_front_matter: false
+    # Inject created timestamp of issue into the frontmatter of the generated file. (default: false)
+    inject_created_at: false
 
-    # Optioanl. Key for the timestamp when `insert_timestamp_to_front_matter` is true. (default: 'created_at')
-    timestamp_key: 'created_at'
+    # Key to be injected for the timestamp. (default: 'created_at')
+    inject_created_at_key: 'created_at'
 
-    # Optional. Formatter for the timestamp when `insert_timestamp_to_front_matter` is true. (default: 'ISO')
+    # Formatter for created timestamp based on Day.js (default: 'ISO')
     # For more information about formatting, read this: https://github.com/iamkun/dayjs/
-    timestamp_format: 'ISO'
+    inject_created_at_format: 'ISO'
+
+    # Whether or not to wrap the value with double quotes. (default: false)
+    inject_created_at_as_string: false
+
+    # Inject updated timestamp of issue into the frontmatter of the generated file. (default: false)
+    inject_updated_at: false
+
+    # Key to be injected for the timestamp.(default: 'updated_at')
+    inject_updated_at_key: 'updated_at'
+
+    # Formatter for updated timestamp based on Day.js (default: 'ISO')
+    # For more information about formatting, read this: https://github.com/iamkun/dayjs/
+    inject_updated_at_format: 'ISO'
+
+    # Whether or not to wrap the value with double quotes. (default: false)
+    inject_updated_at_as_string: false
 ```
 
 ## References

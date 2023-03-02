@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-      - uses: eunjae-lee/issue-to-markdown@v0
+      - uses: eunjae-lee/issue-to-markdown@v1
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - uses: stefanzweifel/git-auto-commit-action@v4
@@ -75,7 +75,7 @@ For those unfamiliar with GitHub Actions, here's a breakdown of the process:
 2. In this step, the issue is transformed into a markdown file, located in its own folder (default location: `content/<slug or issue_number>/index.md`). The token is also necessary here.
 
 ```yml
-- uses: eunjae-lee/issue-to-markdown@v0
+- uses: eunjae-lee/issue-to-markdown@v1
   with:
     token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 ```
@@ -112,7 +112,7 @@ Click here to see the screenshots.
 ## Options
 
 ```yml
-- uses: eunjae-lee/issue-to-markdown@v0
+- uses: eunjae-lee/issue-to-markdown@v1
   with:
     # Required
     token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

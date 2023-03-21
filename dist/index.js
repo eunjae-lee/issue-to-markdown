@@ -138,6 +138,8 @@ function run() {
         const injectUpdatedAtKey = core.getInput('inject_updated_at_key');
         const injectUpdatedAtFormat = core.getInput('inject_updated_at_format');
         const injectUpdatedAtAsString = core.getBooleanInput('inject_updated_at_as_string');
+        const injectFileName = core.getBooleanInput('inject_file_name');
+        const injectFileNameAtKey = core.getInput('inject_file_name_at_key');
         const issue = github.context.payload.issue;
         if (!issue) {
             core.setFailed('This Action works only from the `issue` triggers.');
@@ -174,10 +176,12 @@ function run() {
         const folderName = slugAsFolderName === true && attributes[slugKey]
             ? attributes[slugKey]
             : String(issue.number);
-        const fullPath = path_1.default.join(destPath, folderName, `index${extension}`);
+        const fileName = (injectFileName && attributes[injectFileNameAtKey]) || 'index';
+        const fullPath = path_1.default.join(destPath, folderName, `${fileName}${extension}`);
         const dirname = path_1.default.dirname(fullPath);
-        fs_1.default.rmSync(dirname, { recursive: true, force: true });
-        mkdirp_1.mkdirp.sync(dirname);
+        if (fs_1.default.existsSync(dirname)) {
+            mkdirp_1.mkdirp.sync(dirname);
+        }
         let bodyText = bodyWithoutFrontMatter;
         const images = (0, extract_images_1.extractImages)(bodyText);
         for (const image of images) {

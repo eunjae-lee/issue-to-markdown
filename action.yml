@@ -36,6 +36,14 @@ inputs:
     description: Key to be injected for the title.
     required: false
     default: 'title'
+  inject_file_name:
+    description: Inject file name.
+    required: false
+    default: false
+  inject_file_name_at_key:
+    description: Key to be injected for the file name.
+    required: false
+    default: 'file_name'
   inject_created_at:
     description: Inject created timestamp of issue into the frontmatter of the generated file.
     required: false

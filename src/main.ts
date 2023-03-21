@@ -38,6 +38,8 @@ async function run(): Promise<void> {
   const injectUpdatedAtAsString: boolean = core.getBooleanInput(
     'inject_updated_at_as_string'
   )
+  const injectFileName: boolean = core.getBooleanInput('inject_file_name')
+  const injectFileNameAtKey: string = core.getInput('inject_file_name_at_key')
 
   const issue = github.context.payload.issue
   if (!issue) {
@@ -88,10 +90,14 @@ async function run(): Promise<void> {
     slugAsFolderName === true && attributes[slugKey]
       ? attributes[slugKey]
       : String(issue.number)
-  const fullPath = path.join(destPath, folderName, `index${extension}`)
+  const fileName =
+    (injectFileName && attributes[injectFileNameAtKey]) || 'index'
+  const fullPath = path.join(destPath, folderName, `${fileName}${extension}`)
   const dirname = path.dirname(fullPath)
-  fs.rmSync(dirname, {recursive: true, force: true})
-  mkdirp.sync(dirname)
+
+  if (fs.existsSync(dirname)) {
+    mkdirp.sync(dirname)
+  }
 
   let bodyText = bodyWithoutFrontMatter
   const images = extractImages(bodyText)

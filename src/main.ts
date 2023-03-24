@@ -88,10 +88,14 @@ async function run(): Promise<void> {
     slugAsFolderName === true && attributes[slugKey]
       ? attributes[slugKey]
       : String(issue.number)
-  const fullPath = path.join(destPath, folderName, `index${extension}`)
+  const fullPath =
+    attributes['full_path'] ||
+    path.join(destPath, folderName, `index${extension}`)
   const dirname = path.dirname(fullPath)
-  fs.rmSync(dirname, {recursive: true, force: true})
-  mkdirp.sync(dirname)
+
+  if (!fs.existsSync(dirname)) {
+    mkdirp.sync(dirname)
+  }
 
   let bodyText = bodyWithoutFrontMatter
   const images = extractImages(bodyText)

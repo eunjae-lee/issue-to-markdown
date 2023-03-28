@@ -28,6 +28,14 @@ inputs:
   authors:
     description: List of authors that are authorized to perform this Action
     required: false
+  use_custom_path:
+    description: Let user provide a custom path for output file instead of relying on conventions
+    required: false
+    default: false
+  use_custom_path_key:
+    description: Key for the custom path (when use_custom_path is true)
+    required: false
+    default: 'full_path'
   inject_title:
     description: Inject title of issue into the frontmatter of the generated file.
     required: false

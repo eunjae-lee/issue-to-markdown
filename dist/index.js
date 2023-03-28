@@ -130,6 +130,8 @@ function run() {
         const injectTitle = core.getBooleanInput('inject_title');
         const injectTitleKey = core.getInput('inject_title_key');
         const authors = core.getMultilineInput('authors');
+        const useCustomPath = core.getBooleanInput('use_custom_path');
+        const useCustomPathKey = core.getInput('use_custom_path_key');
         const injectCreatedAt = core.getBooleanInput('inject_created_at');
         const injectCreatedAtKey = core.getInput('inject_created_at_key');
         const injectCreatedAtFormat = core.getInput('inject_created_at_format');
@@ -174,10 +176,13 @@ function run() {
         const folderName = slugAsFolderName === true && attributes[slugKey]
             ? attributes[slugKey]
             : String(issue.number);
-        const fullPath = path_1.default.join(destPath, folderName, `index${extension}`);
+        const fullPath = useCustomPath
+            ? attributes[useCustomPathKey]
+            : path_1.default.join(destPath, folderName, `index${extension}`);
         const dirname = path_1.default.dirname(fullPath);
-        fs_1.default.rmSync(dirname, { recursive: true, force: true });
-        mkdirp_1.mkdirp.sync(dirname);
+        if (!fs_1.default.existsSync(dirname)) {
+            mkdirp_1.mkdirp.sync(dirname);
+        }
         let bodyText = bodyWithoutFrontMatter;
         const images = (0, extract_images_1.extractImages)(bodyText);
         for (const image of images) {

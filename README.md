@@ -141,6 +141,12 @@ Click here to see the screenshots.
       - username1
       - username2
 
+    # Let user provide a custom path for output file instead of relying on conventions (default: false)
+    use_custom_path: false
+
+    # Key for the custom path (when use_custom_path is true, default: 'full_path')
+    use_custom_path_key: 'full_path'
+
     # If set to `true`, the title of the issue is injected into the frontmatter of the generated file. (default: true)
     inject_title: true
 

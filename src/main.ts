@@ -21,6 +21,9 @@ async function run(): Promise<void> {
   const injectTitleKey: string = core.getInput('inject_title_key')
   const authors: string[] = core.getMultilineInput('authors')
 
+  const useCustomPath: boolean = core.getBooleanInput('use_custom_path')
+  const useCustomPathKey: string = core.getInput('use_custom_path_key')
+
   const injectCreatedAt: boolean = core.getBooleanInput('inject_created_at')
   const injectCreatedAtKey: string = core.getInput('inject_created_at_key')
   const injectCreatedAtFormat: string = core.getInput(
@@ -88,9 +91,9 @@ async function run(): Promise<void> {
     slugAsFolderName === true && attributes[slugKey]
       ? attributes[slugKey]
       : String(issue.number)
-  const fullPath =
-    attributes['full_path'] ||
-    path.join(destPath, folderName, `index${extension}`)
+  const fullPath = useCustomPath
+    ? attributes[useCustomPathKey]
+    : path.join(destPath, folderName, `index${extension}`)
   const dirname = path.dirname(fullPath)
 
   if (!fs.existsSync(dirname)) {

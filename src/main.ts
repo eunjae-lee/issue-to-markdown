@@ -9,6 +9,7 @@ import download from 'download'
 import dayjs from 'dayjs'
 import {extractImages} from './extract-images'
 import {formatFrontMatterValue} from './format'
+import sharp from 'sharp'
 
 async function run(): Promise<void> {
   const token: string = core.getInput('token')
@@ -103,11 +104,22 @@ async function run(): Promise<void> {
   let bodyText = bodyWithoutFrontMatter
   const images = extractImages(bodyText)
   for (const image of images) {
-    const newImageFilename = path.basename(image.filename)
+    let newImageFilename = path.basename(image.filename)
     fs.writeFileSync(
       path.join(dirname, newImageFilename),
       await download(image.filename)
     )
+
+    const validExtensionsRegex = /\.(jpg|jpeg|png)$/i
+
+    if (!validExtensionsRegex.test(image.filename)) {
+      await sharp(`./${newImageFilename}`)
+        .toFormat('png')
+        .toFile(`${newImageFilename}.png`)
+      const dirpath = path.join(dirname, newImageFilename)
+      newImageFilename += '.png'
+      fs.unlinkSync(dirpath)
+    }
     bodyText = bodyText.replace(
       image.match,
       `![${image.alt}](./${newImageFilename}${

@@ -10,6 +10,7 @@ import dayjs from 'dayjs'
 import {extractImages} from './extract-images'
 import {formatFrontMatterValue} from './format'
 import sharp from 'sharp'
+import {fileTypeFromBuffer} from 'file-type'
 
 async function run(): Promise<void> {
   const token: string = core.getInput('token')
@@ -110,15 +111,32 @@ async function run(): Promise<void> {
       await download(image.filename)
     )
 
-    const validExtensionsRegex = /\.(jpg|jpeg|png)$/i
+    const imagePath = path.join('./', newImageFilename)
+    const imageExt = path.extname(image.filename).toLocaleLowerCase()
 
-    if (!validExtensionsRegex.test(image.filename)) {
-      await sharp(`./${newImageFilename}`)
-        .toFormat('png')
-        .toFile(`${newImageFilename}.png`)
-      const dirpath = path.join(dirname, newImageFilename)
-      newImageFilename += '.png'
-      fs.unlinkSync(dirpath)
+    if (imageExt === '') {
+      const buffer = fs.readFileSync(imagePath)
+      const imageType = await fileTypeFromBuffer(buffer)
+      sharp.cache(false)
+
+      if (
+        imageType !== undefined &&
+        sharp.format.hasOwnProperty(imageType?.ext)
+      ) {
+        if (imageType.ext === 'gif') {
+          await sharp(`./${newImageFilename}`, {
+            limitInputPixels: false,
+            animated: true,
+            density: 1
+          }).toFile(`newImageFilename.${imageType.ext}`)
+        } else {
+          await sharp(`./${newImageFilename}`).toFile(
+            `newImageFilename.${imageType.ext}`
+          )
+        }
+        newImageFilename += `.${imageType.ext}`
+        fs.unlinkSync(imagePath)
+      }
     }
     bodyText = bodyText.replace(
       image.match,

@@ -111,7 +111,7 @@ async function run(): Promise<void> {
       await download(image.filename)
     )
 
-    const imagePath = path.join('./', newImageFilename)
+    const imagePath = path.join(dirname, newImageFilename)
     const imageExt = path.extname(image.filename).toLocaleLowerCase()
 
     if (imageExt === '') {
@@ -124,15 +124,13 @@ async function run(): Promise<void> {
         sharp.format.hasOwnProperty(imageType?.ext)
       ) {
         if (imageType.ext === 'gif') {
-          await sharp(`./${newImageFilename}`, {
+          await sharp(imagePath, {
             limitInputPixels: false,
             animated: true,
             density: 1
-          }).toFile(`newImageFilename.${imageType.ext}`)
+          }).toFile(`${imagePath}.${imageType.ext}`)
         } else {
-          await sharp(`./${newImageFilename}`).toFile(
-            `newImageFilename.${imageType.ext}`
-          )
+          await sharp(imagePath).toFile(`${imagePath}.${imageType.ext}`)
         }
         newImageFilename += `.${imageType.ext}`
         fs.unlinkSync(imagePath)

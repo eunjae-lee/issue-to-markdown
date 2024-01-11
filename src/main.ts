@@ -9,6 +9,8 @@ import download from 'download'
 import dayjs from 'dayjs'
 import {extractImages} from './extract-images'
 import {formatFrontMatterValue} from './format'
+import sharp from 'sharp'
+import {fileTypeFromBuffer} from 'file-type'
 
 async function run(): Promise<void> {
   const token: string = core.getInput('token')
@@ -103,11 +105,37 @@ async function run(): Promise<void> {
   let bodyText = bodyWithoutFrontMatter
   const images = extractImages(bodyText)
   for (const image of images) {
-    const newImageFilename = path.basename(image.filename)
+    let newImageFilename = path.basename(image.filename)
     fs.writeFileSync(
       path.join(dirname, newImageFilename),
       await download(image.filename)
     )
+
+    const imagePath = path.join(dirname, newImageFilename)
+    const imageExt = path.extname(image.filename).toLocaleLowerCase()
+
+    if (imageExt === '') {
+      const buffer = fs.readFileSync(imagePath)
+      const imageType = await fileTypeFromBuffer(buffer)
+      sharp.cache(false)
+
+      if (
+        imageType !== undefined &&
+        sharp.format.hasOwnProperty(imageType?.ext)
+      ) {
+        if (imageType.ext === 'gif') {
+          await sharp(imagePath, {
+            limitInputPixels: false,
+            animated: true,
+            density: 1
+          }).toFile(`${imagePath}.${imageType.ext}`)
+        } else {
+          await sharp(imagePath).toFile(`${imagePath}.${imageType.ext}`)
+        }
+        newImageFilename += `.${imageType.ext}`
+        fs.unlinkSync(imagePath)
+      }
+    }
     bodyText = bodyText.replace(
       image.match,
       `![${image.alt}](./${newImageFilename}${

@@ -9,7 +9,6 @@ import download from 'download'
 import dayjs from 'dayjs'
 import {extractImages} from './extract-images'
 import {formatFrontMatterValue} from './format'
-import sharp from 'sharp'
 import {fileTypeFromBuffer} from 'file-type'
 
 async function run(): Promise<void> {
@@ -117,25 +116,11 @@ async function run(): Promise<void> {
     if (imageExt === '') {
       const buffer = fs.readFileSync(imagePath)
       const imageType = await fileTypeFromBuffer(buffer)
-      sharp.cache(false)
-
-      if (
-        imageType !== undefined &&
-        sharp.format.hasOwnProperty(imageType?.ext)
-      ) {
-        if (imageType.ext === 'gif') {
-          await sharp(imagePath, {
-            limitInputPixels: false,
-            animated: true,
-            density: 1
-          }).toFile(`${imagePath}.${imageType.ext}`)
-        } else {
-          await sharp(imagePath).toFile(`${imagePath}.${imageType.ext}`)
-        }
-        newImageFilename += `.${imageType.ext}`
-        fs.unlinkSync(imagePath)
-      }
+      newImageFilename += `.${imageType?.ext}`
+      fs.writeFileSync(path.join(dirname, newImageFilename), buffer)
+      fs.unlinkSync(imagePath)
     }
+
     bodyText = bodyText.replace(
       image.match,
       `![${image.alt}](./${newImageFilename}${

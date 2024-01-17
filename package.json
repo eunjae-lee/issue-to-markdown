@@ -12,8 +12,7 @@
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
     "test:watch": "jest --watch",
-    "readd-sharp": "yarn remove sharp && yarn add sharp --platform=linux --arch=x64 sharp",
-    "all": "yarn readd-sharp && yarn build && yarn format && yarn lint && yarn package && yarn test",
+    "all": "yarn build && yarn format && yarn lint && yarn package && yarn test",
     "deploy": "./scripts/deploy.mjs"
   },
   "repository": {
@@ -35,7 +34,6 @@
     "file-type": "^19.0.0",
     "gray-matter": "^4.0.3",
     "mkdirp": "^2.1.3",
-    "sharp": "^0.33.2",
     "yaml": "^2.2.1"
   },
   "devDependencies": {

@@ -12,8 +12,7 @@
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
     "test:watch": "jest --watch",
-    "readd-sharp": "yarn remove sharp && yarn add sharp --platform=linux --arch=x64 sharp",
-    "all": "yarn readd-sharp && yarn build && yarn format && yarn lint && yarn package && yarn test",
+    "all": "yarn build && yarn format && yarn lint && yarn package && yarn test",
     "deploy": "./scripts/deploy.mjs"
   },
   "repository": {

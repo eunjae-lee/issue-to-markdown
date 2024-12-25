@@ -137,9 +137,9 @@ Click here to see the screenshots.
     label: 'publish'
 
     # If not given, only the owner of the repository is authorized to perform this Action. Otherwise, it will fail.
-    authors:
-      - username1
-      - username2
+    authors: |
+      username1
+      username2
 
     # Let user provide a custom path for output file instead of relying on conventions (default: false)
     use_custom_path: false
